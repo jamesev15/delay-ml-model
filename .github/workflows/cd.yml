@@ -1,15 +1,15 @@
 name: 'Continuous Delivery'
 
 on:
-  push:
-    branches:
-      - develop
-      - main
+  workflow_run:
+    workflows: ['Continuous Integration']
+    types:
+      - completed
 
 jobs:
   CD:
     runs-on: ubuntu-latest
-
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -32,3 +32,7 @@ jobs:
       - name: Push Docker image to ECR
         run: |
           docker push 313668866960.dkr.ecr.us-east-2.amazonaws.com/delayml:latest
+
+      - name: Stress test
+        run: |
+          make stress-test
