@@ -3,7 +3,8 @@ name: 'Continuous Delivery'
 on:
   push:
     branches:
-      - feature/workflow 
+      - dev
+      - main
 
 jobs:
   CD:

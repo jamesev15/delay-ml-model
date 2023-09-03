@@ -19,4 +19,7 @@ jobs:
     - name: Test api
       run: |
         make api-test
+    - name: Stress test
+      run: |
+        make stress-test
     
