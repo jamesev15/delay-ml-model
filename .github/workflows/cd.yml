@@ -1,0 +1,33 @@
+name: 'Continuous Delivery'
+
+on:
+  push:
+    branches:
+      - feature/workflow 
+
+jobs:
+  CD:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Login to AWS ECR
+        run: |
+          aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 313668866960.dkr.ecr.us-east-2.amazonaws.com
+
+      - name: Build Docker image
+        run: |
+          docker build -t 313668866960.dkr.ecr.us-east-2.amazonaws.com/delayml:latest .
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push 313668866960.dkr.ecr.us-east-2.amazonaws.com/delayml:latest
