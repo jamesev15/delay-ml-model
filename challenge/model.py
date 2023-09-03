@@ -1,9 +1,11 @@
 from datetime import datetime
 from typing import Tuple, Union
-
+from sklearn.model_selection import train_test_split
+from sklearn.utils import shuffle
 import joblib
 import numpy as np
 import pandas as pd
+import xgboost as xgb
 
 
 class DelayModel:
@@ -23,6 +25,7 @@ class DelayModel:
         ]
         self.features_raw = ["OPERA", "MES", "TIPOVUELO"]
         self.threshold_in_minutes = 15
+        self.model_scale = 4.4402380952380955
 
     def _get_min_diff(self, data: pd.Series) -> float:
         fecha_o = datetime.strptime(data["Fecha-O"], "%Y-%m-%d %H:%M:%S")
@@ -83,6 +86,19 @@ class DelayModel:
             features (pd.DataFrame): preprocessed data.
             target (pd.DataFrame): target.
         """
+        x_train, _, y_train, _ = train_test_split(
+            features, target, test_size=0.33, random_state=42
+        )
+
+        xgb_model = xgb.XGBClassifier(
+            random_state=1,
+            learning_rate=0.01,
+            scale_pos_weight=self.model_scale,
+        )
+        xgb_model.fit(x_train, y_train)
+
+        self._model = xgb_model
+
         return
 
     def predict(self, features: pd.DataFrame) -> list[int]:
