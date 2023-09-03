@@ -1,6 +1,10 @@
 name: 'Continuous Integration'
 
-on: [push]
+on:
+  push:
+    branches:
+      - develop
+      - main
 jobs:
   CI:
     runs-on: ubuntu-latest
