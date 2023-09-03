@@ -33,9 +33,7 @@ class DelayModel:
         min_diff = ((fecha_o - fecha_i).total_seconds()) / 60
         return min_diff
 
-    def _get_target(
-        self, data: pd.DataFrame, target_column: str
-    ) -> pd.DataFrame:
+    def _get_target(self, data: pd.DataFrame, target_column: str) -> pd.DataFrame:
         data["min_diff"] = data.apply(self._get_min_diff, axis=1)
         data[target_column] = np.where(
             data["min_diff"] > self.threshold_in_minutes, 1, 0
@@ -74,9 +72,7 @@ class DelayModel:
         if not target_column:
             return features
 
-        return features, self._get_target(
-            data=data, target_column=target_column
-        )
+        return features, self._get_target(data=data, target_column=target_column)
 
     def fit(self, features: pd.DataFrame, target: pd.DataFrame) -> None:
         """
