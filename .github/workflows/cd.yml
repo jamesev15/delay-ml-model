@@ -33,6 +33,10 @@ jobs:
         run: |
           docker push 313668866960.dkr.ecr.us-east-2.amazonaws.com/delayml:latest
 
+      - name: Install dependencies
+        run: |
+          make install
+
       - name: Stress test
         run: |
           make stress-test
